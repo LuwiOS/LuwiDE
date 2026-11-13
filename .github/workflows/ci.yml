@@ -20,6 +20,12 @@ jobs:
             libx11-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev \
             libgl1-mesa-dev
 
+      - name: Validar o script de instalação
+        run: |
+          bash -n install.sh
+          ./install.sh --help >/dev/null
+          ./install.sh --user --dry-run >/dev/null
+
       - name: Instalar Rust estável
         uses: dtolnay/rust-toolchain@stable
 

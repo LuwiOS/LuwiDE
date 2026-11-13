@@ -29,7 +29,32 @@ Ele está sendo desenvolvido para ser, no futuro, a shell padrão do **LuwiOS** 
 
 Aplicativos externos do Menu Iniciar vêm dos arquivos `.desktop` da máquina (`/usr/share/applications`, `~/.local/share/applications`) mesclados aos da configuração, e são lançados/rastreados pelo **sessiond** (ou direto, em modo degradado, se o daemon estiver fora do ar — a UI nunca trava por isso).
 
-## Como executar
+## Instalação (na sua máquina)
+
+Um único script instala tudo — dependências do sistema (Debian/Ubuntu, Fedora, Arch ou openSUSE), o Rust via rustup se estiver faltando, a compilação em release, os binários, o lançador de sessão `luwide-session` e a entrada do LuwiDE para gerenciadores de login (GDM/SDDM/LightDM):
+
+```bash
+git clone https://github.com/LuwiOS/LuwiDE.git
+cd LuwiDE
+./install.sh            # sistema, em /usr/local (usa sudo)
+luwide-session          # iniciar o LuwiDE
+```
+
+Outras opções:
+
+```bash
+./install.sh --user              # só para o seu usuário (~/.local), sem sudo
+./install.sh --prefix /opt/luwide
+./install.sh --no-deps           # não mexe nos pacotes do sistema
+./install.sh --no-build          # instala binários já compilados (target/release)
+./install.sh --dry-run           # mostra tudo o que faria, sem alterar nada
+./install.sh --uninstall         # remove (mantém ~/.config/Luwi/LuwiDE)
+./install.sh --help              # todas as opções
+```
+
+Após a instalação, você também pode sair da sessão atual e escolher **LuwiDE** na tela de login (funciona melhor com a instalação de sistema).
+
+## Como executar sem instalar (desenvolvimento)
 
 Pré-requisitos: Rust estável (`rustup`) e, no Linux, os pacotes de desenvolvimento do Wayland/X11/GL (ex.: `libwayland-dev libxkbcommon-dev libx11-dev libxcb1-dev libgl1-mesa-dev` no Debian/Ubuntu).
 
