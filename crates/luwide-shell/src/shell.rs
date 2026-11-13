@@ -430,7 +430,7 @@ impl LuwiShell {
             .order(Order::Foreground)
             .show(ctx, |ui| {
                 let (_, full) = ui.allocate_space(bar.size());
-                let painter = ui.painter();
+                let painter = ui.painter().clone();
                 XpTheme::gradient_vertical(painter, full, XpTheme::TASKBAR_HIGHLIGHT, XpTheme::TASKBAR, 10);
                 painter.line_segment(
                     [full.left_top(), full.right_top()],
@@ -560,7 +560,7 @@ impl LuwiShell {
             .order(Order::Foreground)
             .show(ctx, |ui| {
                 let (_, full) = ui.allocate_space(menu.size());
-                let painter = ui.painter();
+                let painter = ui.painter().clone();
                 painter.rect_filled(full, Rounding::same(6.0), XpTheme::WINDOW_BG);
                 painter.rect_stroke(full, Rounding::same(6.0), Stroke::new(1.5, XpTheme::WINDOW_EDGE));
 
@@ -700,7 +700,7 @@ impl LuwiShell {
             .order(if active { Order::Foreground } else { Order::Middle })
             .show(ctx, |ui| {
                 let (_, full) = ui.allocate_space(rect.size());
-                let painter = ui.painter();
+                let painter = ui.painter().clone();
                 let edge = if active { XpTheme::WINDOW_EDGE } else { XpTheme::WINDOW_EDGE_INACTIVE };
                 painter.rect_filled(full, Rounding::same(6.0), XpTheme::WINDOW_BG);
                 painter.rect_stroke(full, Rounding::same(6.0), Stroke::new(1.5, edge));
