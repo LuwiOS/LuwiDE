@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LuwiDE
+Comment=Ambiente de Trabalho leve em Rust com visual XP nostálgico
+Exec=luwide-session
+TryExec=luwide-shell
+Type=Application
+Icon=luwide
+Categories=System;
+Keywords=desktop;session;luwi;

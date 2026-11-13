@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    name: cargo test (workspace)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar dependências de sistema (Wayland/X11/GL para eframe e wayland-server)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config libwayland-dev libxkbcommon-dev \
+            libx11-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev \
+            libgl1-mesa-dev
+
+      - name: Instalar Rust estável
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache do Cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Compilar e testar todo o workspace
+        run: cargo test --workspace --locked || cargo test --workspace
+
+      - name: Build de release (binários da sessão)
+        run: cargo build --workspace --release --locked || cargo build --workspace --release

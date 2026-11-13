@@ -1,16 +1,19 @@
+mod apps;
+mod calc;
 mod shell;
+mod wm;
 
-use efame::NativeOptions;
+use eframe::NativeOptions;
 
 fn main() -> anyhow::Result<()> {
     let options = NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 720.0])
-            .with_title("LuwiDE Shell"),
+            .with_min_inner_size([800.0, 500.0])
+            .with_title("LuwiDE — Ambiente de Trabalho"),
         ..Default::default()
     };
-
-    efame::run_native(
+    eframe::run_native(
         "LuwiDE",
         options,
         Box::new(|cc| Ok(Box::new(shell::LuwiShell::new(cc)))),
