@@ -71,9 +71,10 @@ impl Daemon {
             }
             IpcRequest::RegisterApp { pid, title, exec } => {
                 let mut state = self.state.lock().unwrap();
+                let workspace = state.focused_workspace;
                 state.running.insert(
                     pid,
-                    RunningApp { pid, title, exec, workspace: state.focused_workspace, started_unix: now_unix() },
+                    RunningApp { pid, title, exec, workspace, started_unix: now_unix() },
                 );
                 IpcResponse::Ok
             }
@@ -112,11 +113,8 @@ impl Daemon {
         std::thread::spawn(move || {
             let _ = child.wait();
             daemon.state.lock().unwrap().running.remove(&pid);
-            daemon.children.lock().unwrap().remove(&pid);
             log(&format!("app encerrado: pid={pid}"));
         });
-        // Guarda o Child já "movido" para a thread? Não: o wait consome.
-        // (children fica apenas para apps registrados externamente — vazio aqui.)
         log(&format!("app lançado: '{exec}' pid={pid}"));
         Ok(app)
     }
