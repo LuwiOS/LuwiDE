@@ -4,7 +4,7 @@
 //! pintar gradientes e aplicar o estilo global do egui. Todos os
 //! componentes usam estas constantes — nada de cores soltas pela UI.
 
-use egui::{Color32, Context, CornerRadius, Stroke, Visuals};
+use egui::{Color32, Context, Rounding, Stroke, Visuals};
 
 pub struct XpTheme;
 

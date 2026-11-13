@@ -37,7 +37,7 @@ pub struct RunningApp {
 }
 
 /// Retrato do estado da sessão, servido pelo `luwide-sessiond` via IPC.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SessionSnapshot {
     pub focused_workspace: u8,
     pub running_apps: Vec<RunningApp>,
