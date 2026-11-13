@@ -11,7 +11,7 @@ use std::{
 use wayland_client::{
     delegate_noop,
     globals::{registry_queue_init, GlobalListContents},
-    protocol::{wl_buffer, wl_compositor, wl_output, wl_registry, wl_shm, wl_surface},
+    protocol::{wl_buffer, wl_compositor, wl_output, wl_registry, wl_shm, wl_shm_pool, wl_surface},
     Connection, Dispatch, QueueHandle,
 };
 use wayland_protocols::xdg::shell::client::{xdg_surface, xdg_toplevel, xdg_wm_base};
@@ -66,7 +66,7 @@ impl Dispatch<xdg_wm_base::XdgWmBase, ()> for ClientState {
 delegate_noop!(ClientState: ignore wl_compositor::WlCompositor);
 delegate_noop!(ClientState: ignore wl_surface::WlSurface);
 delegate_noop!(ClientState: ignore wl_shm::WlShm);
-delegate_noop!(ClientState: ignore wl_shm::WlShmPool);
+delegate_noop!(ClientState: ignore wl_shm_pool::WlShmPool);
 delegate_noop!(ClientState: ignore wl_buffer::WlBuffer);
 delegate_noop!(ClientState: ignore wl_output::WlOutput);
 delegate_noop!(ClientState: ignore xdg_toplevel::XdgToplevel);
@@ -127,7 +127,7 @@ fn compositor_aceita_cliente_wayland_real() {
     // Surface + buffer shm real (arquivo temporário como pool de memória).
     let surface = compositor.create_surface(&qh, ());
     let file = tempfile_shm(64 * 64 * 4);
-    let pool = shm.create_pool(file.as_fd(), 64 * 64 * 4, &qh, ());
+    let pool: wl_shm_pool::WlShmPool = shm.create_pool(file.as_fd(), 64 * 64 * 4, &qh, ());
     let buffer = pool.create_buffer(0, 64, 64, 64 * 4, wl_shm::Format::Xrgb8888, &qh, ());
     surface.attach(Some(&buffer), 0, 0);
 

@@ -61,13 +61,18 @@ struct SurfaceData {
     commits: u64,
 }
 
-#[derive(Default)]
 struct LuwiState {
     surfaces: HashMap<u32, String>, // protocol id -> papel ("wl_surface"/"xdg_toplevel")
     buffers: u64,
     commits: u64,
     configures: u32,
     started: Instant,
+}
+
+impl Default for LuwiState {
+    fn default() -> Self {
+        Self { surfaces: HashMap::new(), buffers: 0, commits: 0, configures: 0, started: Instant::now() }
+    }
 }
 
 impl LuwiState {
@@ -184,6 +189,7 @@ impl Dispatch<WlCompositor, ()> for LuwiState {
             Request::CreateRegion { id } => {
                 data_init.init(id, ());
             }
+            _ => {}
         }
     }
 }
@@ -214,12 +220,12 @@ impl Dispatch<WlSurface, SurfaceData> for LuwiState {
                 // Não podemos mutar `data` (é &SurfaceData); guardamos os
                 // callbacks pendentes no próprio recurso via postergação:
                 // respondemos no próximo commit usando a lista do estado.
-                pending_callbacks().insert(surface.id().protocol_id(), callback);
+                pending_callbacks().lock().unwrap().insert(surface.id().protocol_id(), callback);
             }
             Request::Commit => {
                 state.commits += 1;
                 if let Some(callback) =
-                    pending_callbacks().remove(&surface.id().protocol_id())
+                    pending_callbacks().lock().unwrap().remove(&surface.id().protocol_id())
                 {
                     let _ = callback.send_event(
                         wayland_server::protocol::wl_callback::Event::Done {
@@ -235,7 +241,7 @@ impl Dispatch<WlSurface, SurfaceData> for LuwiState {
 
     fn destroyed(state: &mut Self, _client: ClientId, resource: &WlSurface, _data: &SurfaceData) {
         state.surfaces.remove(&resource.id().protocol_id());
-        pending_callbacks().remove(&resource.id().protocol_id());
+        pending_callbacks().lock().unwrap().remove(&resource.id().protocol_id());
     }
 }
 
@@ -328,6 +334,7 @@ impl Dispatch<WlShmPool, ()> for LuwiState {
                 data_init.init(id, ());
             }
             Request::Resize { .. } | Request::Destroy => {}
+            _ => {}
         }
     }
 }
@@ -430,6 +437,7 @@ impl Dispatch<XdgWmBase, ()> for LuwiState {
             }
             Request::Pong { .. } => {} // resposta ao nosso ping
             Request::Destroy => {}
+            _ => {}
         }
     }
 }
@@ -469,6 +477,7 @@ impl Dispatch<XdgSurface, u32> for LuwiState {
             Request::AckConfigure { .. } => {}
             Request::SetWindowGeometry { .. } => {}
             Request::Destroy => {}
+            _ => {}
         }
     }
 }
