@@ -26,8 +26,44 @@ jobs:
       - name: Cache do Cargo
         uses: Swatinem/rust-cache@v2
 
-      - name: Compilar e testar todo o workspace
-        run: cargo test --workspace --locked || cargo test --workspace
+      # Cada etapa grava o log e, em caso de falha, publica os erros como
+      # anotações do check-run (visíveis também via API) antes de falhar.
+      - name: Testar luwide-common
+        run: |
+          set -o pipefail
+          cargo test -p luwide-common 2>&1 | tee /tmp/test-common.log || {
+            python3 .github/scripts/annotate.py /tmp/test-common.log
+            exit 1
+          }
+
+      - name: Testar luwide-sessiond (daemon + IPC)
+        run: |
+          set -o pipefail
+          cargo test -p luwide-sessiond 2>&1 | tee /tmp/test-sessiond.log || {
+            python3 .github/scripts/annotate.py /tmp/test-sessiond.log
+            exit 1
+          }
+
+      - name: Testar luwide-compositor (Wayland)
+        run: |
+          set -o pipefail
+          cargo test -p luwide-compositor 2>&1 | tee /tmp/test-compositor.log || {
+            python3 .github/scripts/annotate.py /tmp/test-compositor.log
+            exit 1
+          }
+
+      - name: Testar shell, panel e launcher (GUI)
+        run: |
+          set -o pipefail
+          cargo test -p luwide-shell -p luwide-panel -p luwide-launcher 2>&1 | tee /tmp/test-gui.log || {
+            python3 .github/scripts/annotate.py /tmp/test-gui.log
+            exit 1
+          }
 
       - name: Build de release (binários da sessão)
-        run: cargo build --workspace --release --locked || cargo build --workspace --release
+        run: |
+          set -o pipefail
+          cargo build --workspace --release 2>&1 | tee /tmp/build-release.log || {
+            python3 .github/scripts/annotate.py /tmp/build-release.log
+            exit 1
+          }
