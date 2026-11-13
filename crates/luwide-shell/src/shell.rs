@@ -301,7 +301,7 @@ impl LuwiShell {
             }
             Some("gradient") => {
                 let top = accent.unwrap_or(XpTheme::DESKTOP_SKY_TOP);
-                XpTheme::gradient_vertical(painter, rect, top, XpTheme::DESKTOP_SKY_LIGHT, 24);
+                XpTheme::gradient_vertical(&painter, rect, top, XpTheme::DESKTOP_SKY_LIGHT, 24);
             }
             _ => {
                 // "Bliss": céu em gradiente, sol, colinas verdes.
@@ -431,7 +431,7 @@ impl LuwiShell {
             .show(ctx, |ui| {
                 let (_, full) = ui.allocate_space(bar.size());
                 let painter = ui.painter().clone();
-                XpTheme::gradient_vertical(painter, full, XpTheme::TASKBAR_HIGHLIGHT, XpTheme::TASKBAR, 10);
+                XpTheme::gradient_vertical(&painter, full, XpTheme::TASKBAR_HIGHLIGHT, XpTheme::TASKBAR, 10);
                 painter.line_segment(
                     [full.left_top(), full.right_top()],
                     Stroke::new(2.0, Color32::from_rgb(140, 190, 255)),
@@ -449,7 +449,7 @@ impl LuwiShell {
                 );
                 let start_resp = ui.interact(start_rect, Id::new("start-button"), Sense::click());
                 let start_color = if self.start_open { XpTheme::START_BUTTON_EDGE } else { XpTheme::START_BUTTON };
-                XpTheme::gradient_vertical(painter, start_rect, XpTheme::START_BUTTON_LIGHT, start_color, 8);
+                XpTheme::gradient_vertical(&painter, start_rect, XpTheme::START_BUTTON_LIGHT, start_color, 8);
                 painter.rect_stroke(start_rect, Rounding::same(6.0), Stroke::new(1.0, XpTheme::START_BUTTON_EDGE));
                 painter.text(
                     start_rect.center(),
@@ -566,7 +566,7 @@ impl LuwiShell {
 
                 // Cabeçalho azul com o usuário
                 let header = Rect::from_min_max(full.min, Pos2::new(full.max.x, full.min.y + 58.0));
-                XpTheme::gradient_vertical(painter, header, XpTheme::TASKBAR_HIGHLIGHT, XpTheme::TASKBAR, 10);
+                XpTheme::gradient_vertical(&painter, header, XpTheme::TASKBAR_HIGHLIGHT, XpTheme::TASKBAR, 10);
                 let user = self
                     .config
                     .as_ref()
@@ -629,7 +629,7 @@ impl LuwiShell {
 
                 // Rodapé: locais + desligar
                 let footer = Rect::from_min_max(Pos2::new(full.min.x, full.max.y - 42.0), full.max);
-                XpTheme::gradient_vertical(painter, footer, XpTheme::TASKBAR, XpTheme::TASKBAR_DARK, 8);
+                XpTheme::gradient_vertical(&painter, footer, XpTheme::TASKBAR, XpTheme::TASKBAR_DARK, 8);
                 let home = luwide_common::home_dir();
                 let places: Vec<(&str, Action)> = vec![
                     ("🗂 Pasta pessoal", Action::OpenExplorerAt(home.clone())),
@@ -714,7 +714,7 @@ impl LuwiShell {
                 };
                 // Recorta o gradiente dentro do retângulo da janela
                 painter.with_clip_rect(Rect::from_min_max(full.min, Pos2::new(full.max.x, full.min.y + 30.0)));
-                XpTheme::gradient_vertical(painter, header, top, bottom, 8);
+                XpTheme::gradient_vertical(&painter, header, top, bottom, 8);
                 painter.text(
                     Pos2::new(header.min.x + 10.0, header.center().y),
                     egui::Align2::LEFT_CENTER,
